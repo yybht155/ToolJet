@@ -69,4 +69,4 @@ jobs:
           KUBECONFIG: kubeconfig.yaml
         run: |
           sudo chmod 644 kubeconfig.yaml
-          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ github.sha }}
+          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet tooljet=${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ github.sha }}
