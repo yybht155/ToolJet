@@ -41,6 +41,7 @@ import { SvgImage } from '@/Editor/Components/SvgImage';
 import { Html } from '@/Editor/Components/Html';
 import { ButtonGroup } from '@/Editor/Components/ButtonGroup';
 import { CustomComponent } from '@/Editor/Components/CustomComponent/CustomComponent';
+import { MathpixRender } from '@/Editor/Components/MathpixRender/MathpixRender';
 import { VerticalDivider } from '@/Editor/Components/verticalDivider';
 import { ColorPicker } from '@/Editor/Components/ColorPicker';
 import { KanbanBoard } from '@/Editor/Components/KanbanBoard/KanbanBoard';
@@ -114,6 +115,7 @@ export const AllComponents = {
   Html,
   ButtonGroup,
   CustomComponent,
+  MathpixRender,
   VerticalDivider,
   ColorPicker,
   KanbanBoard,
