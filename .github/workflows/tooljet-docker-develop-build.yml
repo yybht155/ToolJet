@@ -48,9 +48,25 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker image
-        run: echo $GITHUB_SHA
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: docker/production.Dockerfile
+          push: true
+          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:$GITHUB_SHA
+          platforms: linux/amd64
 
       - name: generate config
-        run: echo $GITHUB_SHA
+        uses: appleboy/kubernetes-action@v0.0.1
+        with:
+          server: ${{ secrets.SERVER }}
+          ca_cert: ${{ secrets.CA }}
+          token: ${{ secrets.TOKEN }}
+          output: kubeconfig.yaml
 
-    
+      - name: deploy
+        env:
+          KUBECONFIG: kubeconfig.yaml
+        run: |
+          sudo chmod 644 kubeconfig.yaml
+          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:$GITHUB_SHA
