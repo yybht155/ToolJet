@@ -48,29 +48,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: docker/production.Dockerfile
-          push: true
-          build-args: COMMIT_SHA=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
-          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
-          platforms: linux/amd64
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo ${{ env.GITHUB_SHA}}
 
       - name: generate config
-        uses: appleboy/kubernetes-action@v0.0.1
-        with:
-          server: ${{ secrets.SERVER }}
-          ca_cert: ${{ secrets.CA }}
-          token: ${{ secrets.TOKEN }}
-          output: kubeconfig.yaml
+        run: echo ${{ env.GITHUB_SHA}}
 
-      - name: deploy
-        env:
-          KUBECONFIG: kubeconfig.yaml
-        run: |
-          sudo chmod 644 kubeconfig.yaml
-          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+    
