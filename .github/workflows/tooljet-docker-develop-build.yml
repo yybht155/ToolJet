@@ -53,7 +53,8 @@ jobs:
           context: .
           file: docker/production.Dockerfile
           push: true
-          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:develop
+          build-args: COMMIT_SHA=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
+          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
           platforms: linux/amd64
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -72,4 +73,4 @@ jobs:
           KUBECONFIG: kubeconfig.yaml
         run: |
           sudo chmod 644 kubeconfig.yaml
-          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:develop
+          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
