@@ -851,6 +851,10 @@
             "displayName": "Componente personalizado",
             "description": "Añadir un componente personalizado"
         },
+        "MathpixRender": {
+            "displayName": "Mathpix Render",
+            "description": "Mathpix Render"
+        },
         "ButtonGroup": {
             "displayName": "Grupo de botones",
             "description": "Agrupar botones"

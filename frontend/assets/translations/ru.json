@@ -854,6 +854,10 @@
       "displayName": "Пользовательский элемент",
       "description": "Добавьте свой собственный react компонент"
     },
+    "MathpixRender": {
+      "displayName": "Mathpix Render",
+      "description": "Mathpix Render"
+  },
     "ButtonGroup":{
       "displayName": "Группа кнопок",
       "description": "ButtonGroup"

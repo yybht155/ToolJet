@@ -38,6 +38,10 @@ const plugins = [
     'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
     'process.env.SERVE_CLIENT': JSON.stringify(process.env.SERVE_CLIENT),
   }),
+  // fix "process is not defined" error:
+  new webpack.ProvidePlugin({
+    process: 'process/browser.js',
+  })
 ];
 
 if (process.env.APM_VENDOR === 'sentry') {

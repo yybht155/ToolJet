@@ -10,6 +10,7 @@ import Codeeditor from './codeeditor.jsx';
 import Colorpicker from './colorpicker.jsx';
 import Container from './container.jsx';
 import Customcomponent from './customcomponent.jsx';
+import Mathpixrender from './mathpixrender.jsx';
 import Datepicker from './datepicker.jsx';
 import Daterangepicker from './daterangepicker.jsx';
 import Divider from './divider.jsx';

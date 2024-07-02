@@ -41,6 +41,7 @@ import { svgImageConfig } from './svgImage';
 import { htmlConfig } from './html';
 import { verticalDividerConfig } from './verticalDivider';
 import { customComponentConfig } from './customComponent';
+import { mathpixRenderConfig } from './mathpixRender';
 import { buttonGroupConfig } from './buttonGroup';
 import { pdfConfig } from './pdf';
 import { stepsConfig } from './steps';
@@ -96,6 +97,7 @@ export {
   htmlConfig,
   verticalDividerConfig,
   customComponentConfig,
+  mathpixRenderConfig,
   buttonGroupConfig,
   pdfConfig,
   stepsConfig,

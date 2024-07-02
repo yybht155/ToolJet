@@ -851,6 +851,10 @@
             "displayName": "Benutzerdefinierte Komponente",
             "description": "Fügen Sie Ihre eigene React-Komponente hinzu"
         },
+        "MathpixRender": {
+            "displayName": "Mathpix Render",
+            "description": "Mathpix Render"
+        },
         "ButtonGroup": {
             "displayName": "Tasten-Gruppe",
             "description": "TastenGruppe"

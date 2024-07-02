@@ -850,6 +850,10 @@
             "displayName": "Componente personalizzata",
             "description": "Aggiungi la tua componente react personalizzata"
         },
+        "MathpixRender": {
+            "displayName": "Mathpix Render",
+            "description": "Mathpix Render"
+        },
         "ButtonGroup": {
             "displayName": "Gruppo Pulsante",
             "description": "GruppoPulsante"

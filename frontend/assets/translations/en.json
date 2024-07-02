@@ -286,9 +286,9 @@
                         "createUpdateDelete": "Create/Update/Delete",
                         "folder": "Folder"
                     },
-                    "groupOptions":{
-                        "deleteGroup":"Delete Group",
-                        "duplicateGroup":"Duplicate Group"
+                    "groupOptions": {
+                        "deleteGroup": "Delete Group",
+                        "duplicateGroup": "Duplicate Group"
                     }
                 },
                 "manageSSO": {
@@ -496,7 +496,7 @@
             "properties": "Properties",
             "events": "Events",
             "layout": "Layout",
-            "devices":"Devices",
+            "devices": "Devices",
             "styles": "Styles",
             "general": "General",
             "validation": "Validation",
@@ -728,10 +728,10 @@
             "addColumn": "Add column",
             "addNewColumn": "Add new column",
             "noActionMessage": "This table doesn't have any action buttons",
-            "horizontalAlignment":"Horizontal alignment",
-            "textAlignment":"Text alignment",
-            "deciamalPlaces":"Decimal Places",
-            "imageFit":"Image fit"
+            "horizontalAlignment": "Horizontal alignment",
+            "textAlignment": "Text alignment",
+            "deciamalPlaces": "Decimal Places",
+            "imageFit": "Image fit"
         },
         "Button": {
             "displayName": "Button",
@@ -892,6 +892,10 @@
         "CustomComponent": {
             "displayName": "Custom Component",
             "description": "Create React components"
+        },
+        "MathpixRender": {
+            "displayName": "Mathpix Render",
+            "description": "Mathpix Render"
         },
         "ButtonGroup": {
             "displayName": "Button Group",

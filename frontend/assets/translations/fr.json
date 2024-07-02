@@ -851,6 +851,10 @@
       "displayName": "Composant personnalisé",
       "description": "Ajoutez votre composant React personnalisé"
     },
+    "MathpixRender": {
+      "displayName": "Mathpix Render",
+      "description": "Mathpix Render"
+  },
     "ButtonGroup": {
       "displayName": "Groupe de boutons",
       "description": "Coup de pied"

@@ -852,6 +852,10 @@
           "displayName": "Komponen khusus",
           "description": "Tambahkan Komponen React Kustom Anda"
         },
+        "MathpixRender": {
+          "displayName": "Mathpix Render",
+          "description": "Mathpix Render"
+      },
         "ButtonGroup": {
           "displayName": "Grup tombol",
           "description": "Buttongroup"
