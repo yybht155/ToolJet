@@ -48,9 +48,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker image
-        run: echo ${{ env.GITHUB_SHA}}
+        run: echo $GITHUB_SHA
 
       - name: generate config
-        run: echo ${{ env.GITHUB_SHA}}
+        run: echo $GITHUB_SHA
 
     
