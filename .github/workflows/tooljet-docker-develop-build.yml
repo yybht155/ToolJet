@@ -53,7 +53,7 @@ jobs:
           context: .
           file: docker/production.Dockerfile
           push: true
-          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:$GITHUB_SHA
+          tags: ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ github.sha }}
           platforms: linux/amd64
 
       - name: generate config
@@ -69,4 +69,4 @@ jobs:
           KUBECONFIG: kubeconfig.yaml
         run: |
           sudo chmod 644 kubeconfig.yaml
-          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:$GITHUB_SHA
+          kubectl -n ${{ secrets.NAMESPACE }} set image deployment/tooljet ${{ secrets.REGISTRY }}/tooljet/tooljet-ce:${{ github.sha }}
