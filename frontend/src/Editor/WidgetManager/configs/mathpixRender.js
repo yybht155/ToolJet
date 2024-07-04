@@ -4,8 +4,7 @@ export const mathpixRenderConfig = {
   description: 'Mathpix Render',
   component: 'MathpixRender',
   properties: {
-    data: { type: 'code', displayName: 'Data', validation: { schema: { type: 'object' }, defaultValue: '{}' } },
-    code: { type: 'code', displayName: 'Code' },
+    data: { type: 'code', displayName: 'Data', validation: { schema: { type: 'string' }, defaultValue: '' } },
   },
   defaultSize: {
     width: 20,
@@ -24,8 +23,19 @@ export const mathpixRenderConfig = {
     },
   },
   exposedVariables: {
-    data: { value: `{{{ title: 'Hi! There', buttonText: 'Update Title'}}}` },
+    data: { value: `\\(ax^2 + bx + c = 0\\)` },
   },
+  actions: [
+    {
+      handle: 'setData',
+      displayName: 'Set data',
+      params: [{ handle: 'data', displayName: 'data', defaultValue: 'New data' }],
+    },
+    {
+      handle: 'clear',
+      displayName: 'Clear',
+    },
+  ],
   definition: {
     others: {
       showOnDesktop: { value: '{{true}}' },
@@ -34,28 +44,8 @@ export const mathpixRenderConfig = {
     properties: {
       visible: { value: '{{true}}' },
       data: {
-        value: `{{{ title: 'Hi! There', buttonText: 'Update Title'}}}`,
-      },
-      code: {
-        value: `import React from 'https://cdn.skypack.dev/react';
-    import ReactDOM from 'https://cdn.skypack.dev/react-dom';
-    import { Button, Container } from 'https://cdn.skypack.dev/@material-ui/core';
-    const MyCustomComponent = ({data, updateData, runQuery}) => (
-      <Container>
-          <h1>{data.title}</h1>
-          <Button
-            color="primary"
-            variant="outlined"
-            onClick={() => {updateData({title: 'Hello World!!'})}}
-          >
-            {data.buttonText}
-          </Button>
-        </Container>
-    );
-    const ConnectedComponent = Tooljet.connectComponent(MyCustomComponent);
-    ReactDOM.render(<ConnectedComponent />, document.body);`,
-        skipResolve: true,
-      },
+        value: `\\(ax^2 + bx + c = 0\\)`,
+      }
     },
     events: [],
     styles: {

@@ -12,7 +12,6 @@ export const MathpixRender = function MathpixRender({
   darkMode,
   layoutPropertyChanged,
 }) {
-  const code = component.component.definition.properties.code;
   const args = component.component.definition.properties.data;
   let items = [];
 
@@ -28,23 +27,23 @@ export const MathpixRender = function MathpixRender({
     ),
   });
 
-  items.push({
-    title: 'Code',
-    children: (
-      <CodeHinter
-        type="basic"
-        initialValue={code.value ?? {}}
-        theme={darkMode ? 'monokai' : 'base16-light'}
-        lang="jsx"
-        lineNumbers={true}
-        className="custom-component"
-        onChange={(value) => paramUpdated({ name: 'code' }, 'value', value, 'properties')}
-        componentName={`component/${component.component.name}/code`}
-        height={400}
-        hideSuggestion={true}
-      />
-    ),
-  });
+  // items.push({
+  //   title: 'Code',
+  //   children: (
+  //     <CodeHinter
+  //       type="basic"
+  //       initialValue={code.value ?? {}}
+  //       theme={darkMode ? 'monokai' : 'base16-light'}
+  //       lang="jsx"
+  //       lineNumbers={true}
+  //       className="custom-component"
+  //       onChange={(value) => paramUpdated({ name: 'code' }, 'value', value, 'properties')}
+  //       componentName={`component/${component.component.name}/code`}
+  //       height={400}
+  //       hideSuggestion={true}
+  //     />
+  //   ),
+  // });
 
   items.push({
     title: 'Devices',

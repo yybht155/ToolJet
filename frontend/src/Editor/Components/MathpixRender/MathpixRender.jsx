@@ -12,7 +12,6 @@ import { loadSre } from 'mathpix-markdown-it/lib/sre/sre-browser';
 
 const outMath = {
   include_svg: true,
-  // Show in context menu:
   include_smiles: true,
   include_asciimath: true,
   include_latex: true,
@@ -25,8 +24,23 @@ let accessibility = {
   sre: loadSre(),
 };
 
+function renderReplaceLine(text) {
+  const textArray = text.split('\n\n');
+  const modifiedSteps = textArray.map((step, index) => {
+    return replaceNewlinesInBrackets(step);
+  });
+  return modifiedSteps.join('\n');
+}
+
+function replaceNewlinesInBrackets(str) {
+  let regex = /\\\[(.*?)\\\]/gs;
+  return str.replace(regex, (match, p1) => {
+    return `\\\[${p1.replace(/\n/g, ' ')}\\\]`;
+  });
+}
+
 export const MathpixRender = (props) => {
-  const { height, properties, styles, id, setExposedVariable, exposedVariables, fireEvent, dataCy, component } = props;
+  const { height, properties, styles, id, setExposedVariable, setExposedVariables, exposedVariables, fireEvent, dataCy, component } = props;
   const dataQueries = useDataQueries();
 
   const showPlaceholder = useGridStore((state) => {
@@ -42,64 +56,49 @@ export const MathpixRender = (props) => {
   }, shallow);
 
   const { visibility, boxShadow } = styles;
-  const { code, data } = properties;
+  const { data } = properties;
   const [customProps, setCustomProps] = useState(data);
+  const [finalText, setFinalText] = useState(renderReplaceLine(data));
   const dataQueryRef = useRef(dataQueries);
   const customPropRef = useRef(data);
 
   useEffect(() => {
     setCustomProps(data);
     customPropRef.current = data;
+    setFinalText(renderReplaceLine(data)); // 更新finalText
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(data)]);
+  }, [data]);
 
-  useEffect(() => {
-    if (!isEqual(exposedVariables.data, customProps)) {
-      setExposedVariable('data', customProps);
-      //   sendMessageToIframe({ message: 'DATA_UPDATED' });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setExposedVariable, customProps, exposedVariables.data]);
-
-  useEffect(() => {
-    // sendMessageToIframe({ message: 'CODE_UPDATED' });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
+  // useEffect(() => {
+  //   if (!isEqual(exposedVariables.data, customProps)) {
+  //     setExposedVariable('data', customProps);
+  //     //   sendMessageToIframe({ message: 'DATA_UPDATED' });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [setExposedVariable, customProps, exposedVariables.data]);
 
   useEffect(() => {
     dataQueryRef.current = dataQueries;
   }, [dataQueries]);
 
-  useEffect(() => {
-    window.addEventListener('message', (e) => {
-      try {
-        if (e.data.from === 'mathpixRender' && e.data.componentId === id) {
-          if (e.data.message === 'UPDATE_DATA') {
-            setCustomProps({ ...customPropRef.current, ...e.data.updatedObj });
-          } else if (e.data.message === 'RUN_QUERY') {
-            const filteredQuery = dataQueryRef.current.filter(
-              (query) => query.name === e.data.queryName && isQueryRunnable(query)
-            );
-            const parameters = e.data.parameters ? JSON.parse(e.data.parameters) : {};
-            filteredQuery.length === 1 &&
-              fireEvent('onTrigger', {
-                component,
-                queryId: filteredQuery[0].id,
-                queryName: filteredQuery[0].name,
-                parameters,
-              });
-          } else {
-            // sendMessageToIframe(e.data);
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const exposedVariables = {
+      setData: async function (data) {
+        setCustomProps(data);
+        customPropRef.current = data;
+        setFinalText(renderReplaceLine(data)); // 更新finalText
+      },
+      clear: async function () {
+        setCustomProps('');
+        customPropRef.current = '';
+        setFinalText(renderReplaceLine('')); // 更新finalText
+      },
+    };
+    setExposedVariables(exposedVariables);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customProps, properties.data, setCustomProps]);
 
   /** In order for the math to be accessibility, need to make sure that the sre module is loaded */
   useEffect(() => {
@@ -119,14 +118,9 @@ export const MathpixRender = (props) => {
     return <div className="card">Loading..</div>;
   }
   return (
-    <div className="card">
+    <div className="card" style={{ height: height, overflow: 'hidden auto', padding: '10px' }}>
       <MathpixLoader>
-        <MathpixMarkdown text="\\(ax^2 + bx + c = 0\\)" outMath={outMath} accessibility={accessibility} />
-        <MathpixMarkdown
-          text="$x = \frac { - b \pm \sqrt { b ^ { 2 } - 4 a c } } { 2 a }$"
-          outMath={outMath}
-          accessibility={accessibility}
-        />
+        <MathpixMarkdown text={finalText} outMath={outMath} accessibility={accessibility} />
       </MathpixLoader>
     </div>
   );

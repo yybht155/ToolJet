@@ -180,6 +180,8 @@ const WidgetIcon = (props) => {
       return <Upstatistics {...props} />;
     case 'verticaldivider':
       return <Verticaldivider {...props} />;
+    case 'mathpixrender':
+      return <Mathpixrender {...props} />;
 
     default:
       return <BoundedBox {...props} />;
