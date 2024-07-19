@@ -51,7 +51,7 @@ export default class RestapiQueryService implements QueryService {
     if (bodyToggle) {
       const jsonBody = queryOptions['json_body'];
       if (!jsonBody) return undefined;
-      if (typeof jsonBody === 'string') return JSON5.parse(jsonBody);
+      if (typeof jsonBody === 'string') return JSON5.parse(jsonBody.replace(/\n/g, '\\n'));
       else return jsonBody;
     } else {
       const _body = (queryOptions.body || []).filter((o) => {
@@ -237,14 +237,14 @@ export default class RestapiQueryService implements QueryService {
     if (process.env.NODE_EXTRA_CA_CERTS) {
       'https' in httpsParams
         ? (httpsParams.https.certificateAuthority = httpsParams.https?.certificateAuthority.concat([
-            ...tls.rootCertificates,
-            readFileSync(process.env.NODE_EXTRA_CA_CERTS),
-          ]))
+          ...tls.rootCertificates,
+          readFileSync(process.env.NODE_EXTRA_CA_CERTS),
+        ]))
         : (httpsParams = {
-            https: {
-              certificateAuthority: [...tls.rootCertificates, readFileSync(process.env.NODE_EXTRA_CA_CERTS)].join('\n'),
-            },
-          });
+          https: {
+            certificateAuthority: [...tls.rootCertificates, readFileSync(process.env.NODE_EXTRA_CA_CERTS)].join('\n'),
+          },
+        });
     }
 
     return httpsParams;
