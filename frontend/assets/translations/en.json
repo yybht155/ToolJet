@@ -174,9 +174,9 @@
                 "goToAllDatasources": "Go to all Datasource",
                 "send": "Send"
             },
-            "runQueryOnApplicationLoad": "Run this query on application load?",
-            "confirmBeforeQueryRun": "Request confirmation before running query?",
-            "notificationOnSuccess": "Show notification on success?",
+            "runQueryOnApplicationLoad": "Run this query on application load",
+            "confirmBeforeQueryRun": "Request confirmation before running query",
+            "notificationOnSuccess": "Show notification on success",
             "successMessage": "Success Message",
             "queryRanSuccessfully": "Query ran successfully",
             "notificationDuration": "Notification duration (s)",
@@ -207,6 +207,7 @@
                 "pageIndex": "Page index",
                 "component": "Component",
                 "addHandler": "New event handler",
+                "addNewEvent": "Add new event",
                 "addEventHandler": "+ Add event handler",
                 "emptyMessage": "This {{componentName}} doesn't have any event handlers",
                 "page": "Page"
@@ -948,7 +949,7 @@
             "typeComment": "Type your comment here"
         },
         "Settings": {
-            "text": "Settings",
+            "text": "Triggers",
             "tip": "Global Settings",
             "hideHeader": "Hide header for launched apps",
             "maintenanceMode": "Maintenance mode",
