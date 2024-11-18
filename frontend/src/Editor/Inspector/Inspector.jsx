@@ -92,6 +92,7 @@ export const Inspector = ({
     layouts: allComponents[selectedComponentId].layouts,
     parent: allComponents[selectedComponentId].parent,
   };
+
   const [showWidgetDeleteConfirmation, setWidgetDeleteConfirmation] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [newComponentName, setNewComponentName] = useState('');
@@ -431,6 +432,8 @@ export const Inspector = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify({ showHeaderActionsMenu })]);
 
+  console.log('componentMeta', componentMeta);
+
   return (
     <div className="inspector">
       <ConfirmDialog
@@ -527,8 +530,8 @@ export const Inspector = ({
                   componentMeta.displayName === 'Toggle Switch (Legacy)'
                     ? 'Toggle (Legacy)'
                     : componentMeta.displayName === 'Toggle Switch'
-                    ? 'Toggle Switch'
-                    : componentMeta.component,
+                      ? 'Toggle Switch'
+                      : componentMeta.component,
               })}
             </small>
           </span>
@@ -551,6 +554,8 @@ const getDocsLink = (componentMeta) => {
       return 'https://docs.tooljet.com/docs/widgets/dropdown';
     case 'MultiselectV2':
       return 'https://docs.tooljet.com/docs/widgets/multiselect';
+    case 'DaterangePicker':
+      return 'https://docs.tooljet.com/docs/widgets/date-range-picker';
     default:
       return `https://docs.tooljet.io/docs/widgets/${convertToKebabCase(component)}`;
   }

@@ -1,15 +1,21 @@
 import { tooljetDbOrmconfig } from 'ormconfig';
-import { EntityManager, createConnection, Connection } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 
 export async function createMigrationConnectionForToolJetDatabase(
   connectionName: string
-): Promise<{ tooljetDbManager: EntityManager; tooljetDbConnection: Connection }> {
+): Promise<{ tooljetDbManager: EntityManager; tooljetDbConnection: DataSource }> {
   try {
-    const tooljetDbConnection = await createConnection({
+    const tooljetDbConnection = new DataSource({
       ...tooljetDbOrmconfig,
       name: connectionName,
+      extra: {
+        ...tooljetDbOrmconfig.extra,
+        idleTimeoutMillis: 10000,
+        allowExitOnIdle: true,
+      },
     } as any);
 
+    await tooljetDbConnection.initialize();
     const tooljetDbManager = tooljetDbConnection.createEntityManager();
     await tooljetDbManager.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager.queryRunner.query(`SET statement_timeout = '0';`);
