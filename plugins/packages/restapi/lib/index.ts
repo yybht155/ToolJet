@@ -58,7 +58,7 @@ export default class RestapiQueryService implements QueryService {
         // FIXME: Remove the code inside this if condition and return undefined once data migration is complete
         const jsonBody = queryOptions['json_body'];
         if (!jsonBody) return undefined;
-        if (typeof jsonBody === 'string') return { key: 'json_body', value: JSON5.parse(jsonBody.replace(/\n/g, '\\n')) };
+        if (typeof jsonBody === 'string') return { key: 'json_body', value: JSON5.parse(jsonBody) };
         else return { key: 'json_body', value: jsonBody };
       } else {
         return { key: 'raw_body', value: rawBody };
@@ -174,7 +174,7 @@ export default class RestapiQueryService implements QueryService {
       _requestOptions.json = _body.value;
     } else if (_body) {
       if (isJson) {
-        _requestOptions.json = JSON5.parse(_body.value);
+        _requestOptions.json = JSON5.parse(_body.value.replace(/\n/g, '\\n'));
       } else {
         _requestOptions.body = _body.value;
       }
