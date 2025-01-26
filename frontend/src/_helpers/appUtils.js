@@ -965,7 +965,12 @@ export function getQueryVariables(options, state) {
       } else {
         const dynamicVariables = getDynamicVariables(options) || [];
         dynamicVariables.forEach((variable) => {
-          queryVariables[variable] = resolveReferences(variable, state);
+          let reference = resolveReferences(variable, state);
+          if (reference !== null && typeof reference === 'string') {
+            queryVariables[variable] = reference.replace(/\"/g, '\\"');
+          } else {
+            queryVariables[variable] = reference;
+          }
         });
       }
 
