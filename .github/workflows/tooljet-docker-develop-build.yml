@@ -3,7 +3,6 @@ name: Tooljet develop docker image build
 on:
   push:
     branches:
-      - develop
       - deploy
 
   workflow_dispatch:
@@ -17,14 +16,14 @@ jobs:
   tooljet-develop-image:
     runs-on: ubuntu-latest
     if: |
-      ${{ github.ref == 'refs/heads/develop' }} &&
+      ${{ github.ref == 'refs/heads/deploy' }} &&
       ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.job-to-run == 'tooljet-develop-image' }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: refs/heads/develop
+          ref: refs/heads/deploy
 
       # Create Docker Buildx builder with platform configuration
       - name: Set up Docker Buildx
