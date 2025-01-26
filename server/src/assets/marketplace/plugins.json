@@ -21,7 +21,8 @@
     "version": "1.0.0",
     "id": "openai",
     "author": "Tooljet",
-    "timestamp": "Mon, 10 Apr 2023 06:33:21 GMT"
+    "timestamp": "Mon, 10 Apr 2023 06:33:21 GMT",
+    "tags": ["AI"]
   },
   {
     "name": "AWS Textract",
@@ -89,27 +90,45 @@
     "timestamp": "Wed, 06 Mar 2024 11:34:26 GMT"
   },
   {
-    "name": "portkey",
+    "name": "Presto",
+    "description": "Plugin for PrestoDB data source",
+    "version": "1.0.0",
+    "id": "presto",
+    "author": "Tooljet",
+    "timestamp": "Thu, 08 Aug 2024 11:04:36 GMT"
+  },
+  {
+    "name": "Sharepoint",
+    "description": "Plugin for Sharepoint API",
+    "version": "1.0.0",
+    "id": "sharepoint",
+    "author": "Tooljet",
+    "timestamp": "Wed, 04 Sep 2024 20:18:30 GMT"
+  },
+  {
+    "name": "Jira",
+    "description": "Plugin for Jira data source",
+    "version": "1.0.0",
+    "id": "jira",
+    "author": "Tooljet",
+    "timestamp": "Thu, 08 Aug 2024 11:04:36 GMT"
+  },
+  {
+    "name": "Portkey",
     "description": "Plugin for Portkey APIs",
     "version": "1.0.0",
     "id": "portkey",
     "author": "Portkey",
-    "timestamp": "Sat, 29 Jun 2024 09:40:13 GMT"
+    "timestamp": "Sat, 29 Jun 2024 09:40:13 GMT",
+    "tags": ["AI"]
   },
   {
-    "name": "pinecone",
-    "description": "api plugin from pinecone",
+    "name": "Pinecone",
+    "description": "Plugin for Pinecone Vector DB",
     "version": "1.0.0",
     "id": "pinecone",
     "author": "Tooljet",
-    "timestamp": "Mon, 28 Oct 2024 08:08:28 GMT"
-  },
-  {
-    "name": "Qdrant",
-    "description": "Plugin for Qdrant APIs",
-    "version": "1.0.0",
-    "id": "qdrant",
-    "author": "Tooljet",
-    "timestamp": "Tue, 10 Dec 2024 02:11:32 GMT"
+    "timestamp": "Mon, 28 Oct 2024 08:08:28 GMT",
+    "tags": ["AI"]
   }
 ]

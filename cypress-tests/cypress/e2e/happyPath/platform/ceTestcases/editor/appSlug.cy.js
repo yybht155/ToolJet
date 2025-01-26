@@ -41,7 +41,7 @@ describe("App slug", () => {
         );
         cy.get(commonWidgetSelector.appLinkField).verifyVisibleElement(
             "have.text",
-            `http://localhost:8082/my-workspace/apps/${Cypress.env("appId")}`
+            `${Cypress.config('baseUrl')}/my-workspace/apps/${Cypress.env("appId")}`
         );
 
         cy.wait(500);
@@ -50,20 +50,22 @@ describe("App slug", () => {
             "have.text",
             "App slug can't be empty"
         );
-
         cy.clearAndType(commonWidgetSelector.appSlugInput, "_2#");
+        cy.wait(500)
         cy.get(commonWidgetSelector.appSlugErrorLabel).verifyVisibleElement(
             "have.text",
             "Special characters are not accepted."
         );
 
         cy.clearAndType(commonWidgetSelector.appSlugInput, "t ");
+        cy.wait(500)
         cy.get(commonWidgetSelector.appSlugErrorLabel).verifyVisibleElement(
             "have.text",
             "Cannot contain spaces"
         );
 
         cy.clearAndType(commonWidgetSelector.appSlugInput, "T");
+        cy.wait(500)
         cy.get(commonWidgetSelector.appSlugErrorLabel).verifyVisibleElement(
             "have.text",
             "Only lowercase letters are accepted."
@@ -71,7 +73,8 @@ describe("App slug", () => {
 
         cy.get(commonWidgetSelector.appSlugInput).clear();
         cy.clearAndType(commonWidgetSelector.appSlugInput, data.slug);
-        cy.get(commonWidgetSelector.appSlugErrorLabel).verifyVisibleElement(
+        cy.wait(500)
+        cy.get('[data-cy="app-slug-accepted-label"]').verifyVisibleElement(
             "have.text",
             "Slug accepted!"
         );
@@ -81,11 +84,11 @@ describe("App slug", () => {
         );
         cy.get(commonWidgetSelector.appLinkField).verifyVisibleElement(
             "have.text",
-            `http://localhost:8082/my-workspace/apps/${data.slug}`
+            `${Cypress.config('baseUrl')}/my-workspace/apps/${data.slug}`
         );
         cy.url().should(
             "eq",
-            `http://localhost:8082/my-workspace/apps/${data.slug}/home`
+            `${Cypress.config('baseUrl')}/my-workspace/apps/${data.slug}`
         );
 
         releaseApp();
@@ -94,15 +97,15 @@ describe("App slug", () => {
         cy.wait(2000);
         cy.url().should(
             "eq",
-            `http://localhost:8082/applications/${data.slug}/home?version=v1`
+            `${Cypress.config('baseUrl')}/applications/${data.slug}/home?version=v1`
         );
         cy.visit("/my-workspace");
         cy.wait(500);
 
         cy.visitSlug({
-            actualUrl: `http://localhost:8082/applications/${data.slug}`,
+            actualUrl: `${Cypress.config('baseUrl')}/applications/${data.slug}`,
         });
-        cy.url().should("eq", `http://localhost:8082/applications/${data.slug}`);
+        cy.url().should("eq", `${Cypress.config('baseUrl')}/applications/${data.slug}`);
         cy.visit("/my-workspace");
         cy.wait(500);
 
@@ -112,6 +115,7 @@ describe("App slug", () => {
         cy.get(commonSelectors.leftSideBarSettingsButton).click();
         cy.get(commonWidgetSelector.appSlugInput).clear();
         cy.clearAndType(commonWidgetSelector.appSlugInput, data.slug);
+        cy.wait(500)
         cy.get(commonWidgetSelector.appSlugErrorLabel).verifyVisibleElement(
             "have.text",
             "This app slug is already taken."
@@ -172,20 +176,20 @@ describe("App slug", () => {
         cy.get(commonWidgetSelector.modalCloseButton).click();
         cy.url().should(
             "eq",
-            `http://localhost:8082/my-workspace/apps/${data.slug}/home`
+            `${Cypress.config('baseUrl')}/my-workspace/apps/${data.slug}/home`
         );
 
         cy.openInCurrentTab(commonWidgetSelector.previewButton);
         cy.wait(1000);
         cy.url().should(
             "eq",
-            `http://localhost:8082/applications/${data.slug}/home?version=v1`
+            `${Cypress.config('baseUrl')}/applications/${data.slug}/home?version=v1`
         );
         cy.visit("/my-workspace");
         cy.wait(500);
 
         cy.visitSlug({ actualUrl: `/applications/${data.slug}` });
-        cy.url().should("eq", `http://localhost:8082/applications/${data.slug}`);
+        cy.url().should("eq", `${Cypress.config('baseUrl')}/applications/${data.slug}`);
         cy.visit("/my-workspace");
         cy.wait(500);
 

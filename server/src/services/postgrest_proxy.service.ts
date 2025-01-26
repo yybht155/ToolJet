@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import { EntityManager, In, QueryFailedError } from 'typeorm';
 import { InternalTable } from 'src/entities/internal_table.entity';
@@ -6,27 +6,54 @@ import * as proxy from 'express-http-proxy';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { maybeSetSubPath } from '../helpers/utils.helper';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ActionTypes, ResourceTypes } from 'src/entities/audit_log.entity';
 import { PostgrestError, TooljetDatabaseError, TooljetDbActions } from 'src/modules/tooljet_db/tooljet-db.types';
 import { QueryError } from 'src/modules/data_sources/query.errors';
 import got from 'got';
+import { TooljetDbService } from './tooljet_db.service';
+import { validateTjdbJSONBColumnInputs } from 'src/helpers/tooljet_db.helper';
 
 @Injectable()
 export class PostgrestProxyService {
-  constructor(private readonly manager: EntityManager, private readonly configService: ConfigService) {}
+  constructor(
+    private readonly manager: EntityManager,
+    private readonly configService: ConfigService,
+    private eventEmitter: EventEmitter2,
+    private tooljetDbService: TooljetDbService
+  ) {}
 
   // NOTE: This method forwards request directly to PostgREST Using express middleware
   // If additional functionalities from http proxy isn't used, we can deprecate this
   // and start explicitly making request and handle the responses accordingly
   async proxy(req, res, next) {
     const organizationId = req.headers['tj-workspace-id'] || req.dataQuery?.app?.organizationId;
+
+    const dbUser = `user_${organizationId}`;
+    const dbSchema = `workspace_${organizationId}`;
+    const authToken = 'Bearer ' + this.signJwtPayload(dbUser);
+
     req.url = await this.replaceTableNamesAtPlaceholder(req.url, organizationId);
-    const authToken = 'Bearer ' + this.signJwtPayload(this.configService.get<string>('PG_USER'));
     req.headers = {};
     req.headers['Authorization'] = authToken;
     // https://postgrest.org/en/v12/references/api/preferences.html#prefer-header
-    req.headers['Prefer'] = 'count=exact, return=representation';
+    req.headers['Prefer'] = `count=exact, return=representation`;
+    if (['GET', 'HEAD'].includes(req.method)) req.headers['Accept-Profile'] = dbSchema;
+    if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) req.headers['Content-Profile'] = dbSchema;
 
     res.set('Access-Control-Expose-Headers', 'Content-Range');
+
+    if (!isEmpty(req.dataQuery) && !isEmpty(req.user)) {
+      this.eventEmitter.emit('auditLogEntry', {
+        userId: req.user.id,
+        organizationId,
+        resourceId: req.dataQuery.id,
+        resourceName: req.dataQuery.name,
+        resourceType: ResourceTypes.DATA_QUERY,
+        actionType: ActionTypes.DATA_QUERY_RUN,
+        metadata: {},
+      });
+    }
 
     const tableId = req.url.split('?')[0].split('/').pop();
     const internalTable = await this.manager.findOne(InternalTable, {
@@ -43,9 +70,21 @@ export class PostgrestProxyService {
       req.headers['tableInfo'] = tableInfo;
     }
 
+    if (['PATCH', 'POST'].includes(req.method)) {
+      await this.validateJSONBInputs(organizationId, internalTable.tableName, req.body);
+    }
+
     return this.httpProxy(req, res, next);
   }
 
+  /**
+   * Handles the TJDB request from Query Builder
+   * @param url
+   * @param method
+   * @param headers
+   * @param body
+   * @returns
+   */
   async perform(
     url: string,
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -53,7 +92,9 @@ export class PostgrestProxyService {
     body: Record<string, any> = {}
   ) {
     try {
-      const authToken = 'Bearer ' + this.signJwtPayload(this.configService.get<string>('PG_USER'));
+      const dbUser = `user_${headers['tj-workspace-id']}`;
+      const dbSchema = `workspace_${headers['tj-workspace-id']}`;
+      const authToken = 'Bearer ' + this.signJwtPayload(dbUser);
       const updatedPath = replaceUrlForPostgrest(url);
       let postgrestUrl = (this.configService.get<string>('PGRST_HOST') || 'http://localhost:3001') + updatedPath;
 
@@ -76,22 +117,29 @@ export class PostgrestProxyService {
         headers['tableinfo'] = tableInfo;
       }
 
+      if (['PATCH', 'POST'].includes(method)) {
+        await this.validateJSONBInputs(headers['tj-workspace-id'], internalTable.tableName, body);
+      }
+
       const reqHeaders = {
         ...headers,
         Authorization: authToken,
         Prefer: 'count=exact, return=representation',
+        ...(['GET', 'HEAD'].includes(method) && { 'Accept-Profile': dbSchema }),
+        ...(['POST', 'PATCH', 'PUT', 'DELETE'].includes(method) && { 'Content-Profile': dbSchema }),
       };
 
       const response = await got(postgrestUrl, {
         method,
         headers: reqHeaders,
         responseType: 'json',
+        throwHttpErrors: true,
         ...(!isEmpty(body) && { body: JSON.stringify(body) }),
       });
 
       return response.body;
     } catch (error) {
-      if (!isEmpty(error.response) && (error.response.statusCode < 200 || error.response.statusCode >= 300)) {
+      if (!isEmpty(error.response.rawBody) && (error.response.statusCode < 200 || error.response.statusCode >= 300)) {
         const postgrestResponse = JSON.parse(error.response.rawBody.toString().toString('utf8'));
         const errorMessage = postgrestResponse.message;
         const errorContext: {
@@ -110,7 +158,7 @@ export class PostgrestProxyService {
         throw new QueryError(tooljetDbError.toString(), { code: tooljetDbError.code }, {});
       }
 
-      throw new QueryError('Query could not be completed', error.message, {});
+      throw new QueryError('Query could not be completed', error.message, { message: error.message });
     }
   }
 
@@ -207,6 +255,26 @@ export class PostgrestProxyService {
     if (isEmpty(tableNamesNotInOrg)) return internalTables;
 
     throw new NotFoundException('Internal table not found: ' + tableNamesNotInOrg);
+  }
+
+  private async validateJSONBInputs(organizationId, tableName, body) {
+    const tableDetails = await this.tooljetDbService.perform(organizationId, 'view_table', {
+      table_name: tableName,
+    });
+
+    const jsonbColumns = tableDetails.columns
+      .filter((column) => column.data_type === 'jsonb')
+      .map((column) => column.column_name);
+
+    if (jsonbColumns.length) {
+      const inValidJsonbColumns = validateTjdbJSONBColumnInputs(jsonbColumns, body);
+      if (inValidJsonbColumns.length) {
+        throw new HttpException(
+          `Expected JSON values in the following columns : ${inValidJsonbColumns.join(', ')}`,
+          400
+        );
+      }
+    }
   }
 }
 
